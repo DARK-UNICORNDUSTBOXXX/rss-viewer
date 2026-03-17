@@ -18,7 +18,7 @@ html="""
 
 for site in sites:
 
-    html+=f"<h3>{site['name']}</h3><ul>"
+    html+=f'<h3><a href="{site["top"]}" target="_blank">{site["name"]}</a></h3><ul>'
 
     feed=feedparser.parse(site["url"])
 
