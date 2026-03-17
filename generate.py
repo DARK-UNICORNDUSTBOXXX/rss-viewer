@@ -25,15 +25,16 @@ for site in sites:
     for entry in feed.entries[:7]:
 
         time="--:--"
+        t=None
 
-        if hasattr(entry,"published_parsed") and entry.published_parsed:
+        if "published_parsed" in entry and entry.published_parsed:
             t=datetime(*entry.published_parsed[:6])
 
-        elif hasattr(entry,"updated_parsed") and entry.updated_parsed:
+        elif "updated_parsed" in entry and entry.updated_parsed:
             t=datetime(*entry.updated_parsed[:6])
 
-        else:
-            t=None
+        elif "created_parsed" in entry and entry.created_parsed:
+            t=datetime(*entry.created_parsed[:6])
 
         if t:
             time=t.strftime("%m/%d %H:%M")
