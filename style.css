@@ -42,3 +42,24 @@ a:hover{
 background:#2c3e50;
 color:white;
 }
+
+/* メルカリ画像サイドバー */
+
+.left_ads{
+position:fixed;
+left:20px;
+top:120px;
+width:170px;
+}
+
+.left_ads img{
+width:160px;
+margin-bottom:12px;
+border-radius:6px;
+transition:0.2s;
+}
+
+.left_ads img:hover{
+transform:scale(1.05);
+box-shadow:0 0 8px #000;
+}
