@@ -1,91 +1,63 @@
 import feedparser
-import random
 import requests
 from bs4 import BeautifulSoup
+import html
 
-RSS_URL = "RSS_URL"
-MERCARI_SEARCH = "https://jp.mercari.com/search?keyword=初音ミク フィギュア"
+rss_list = {
+    "fig速": "https://figsoku.net/blog-feed.xml",
+    "電撃ホビー": "https://hobby.dengeki.com/feed/",
+    "ホビーサーチ": "https://www.1999.co.jp/blog/feed"
+}
 
-# RSS取得
-feed = feedparser.parse(RSS_URL)
+def get_thumbnail(url):
+    try:
+        r = requests.get(url, timeout=10)
+        soup = BeautifulSoup(r.text, "html.parser")
 
-# メルカリ検索ページ取得
-r = requests.get(MERCARI_SEARCH, headers={"User-Agent":"Mozilla/5.0"})
-soup = BeautifulSoup(r.text,"html.parser")
+        og = soup.find("meta", property="og:image")
+        if og:
+            return og["content"]
 
-mercari_items = []
+        img = soup.find("img")
+        if img:
+            return img["src"]
 
-for a in soup.select("a[href*='/item/']"):
+    except:
+        pass
 
-    link = "https://jp.mercari.com" + a["href"]
+    return ""
 
-    img = a.find("img")
-    if not img:
-        continue
+html_output = ""
 
-    src = img.get("src") or img.get("data-src")
-    if not src:
-        continue
+for site, rss in rss_list.items():
 
-    mercari_items.append((link,src))
+    html_output += f'<div class="rss-site">\n'
+    html_output += f'<div class="rss-site-title">{site}</div>\n'
 
-# ランダム6件
-ads = random.sample(mercari_items, min(6,len(mercari_items)))
+    feed = feedparser.parse(rss)
 
-# RSS作成
-rss_html = ""
+    for entry in feed.entries[:15]:
 
-for e in feed.entries[:30]:
+        title = html.escape(entry.title)
+        link = entry.link
 
-    img = ""
+        thumb = get_thumbnail(link)
 
-    if "summary" in e:
-        s = BeautifulSoup(e.summary,"html.parser")
-        tag = s.find("img")
-        if tag:
-            img = tag.get("src") or tag.get("data-src") or ""
+        html_output += '<div class="rss-item">\n'
 
-    rss_html += f"""
-<div class="rss-item">
-<a href="{e.link}" target="_blank">
-<img src="{img}">
-<div class="title">{e.title}</div>
-</a>
-</div>
-"""
+        if thumb:
+            html_output += f'<a href="{link}" target="_blank"><img class="rss-thumb" src="{thumb}"></a>\n'
 
-# 広告HTML
-ads_html = '<a href="https://px.a8.net/svt/ejp?a8mat=XXXX">\n'
+        html_output += f'''
+        <div class="rss-title">
+        <a href="{link}" target="_blank">{title}</a>
+        </div>
+        '''
 
-for link,img in ads:
-    ads_html += f'<img src="{img}" class="adimg">\n'
+        html_output += '</div>\n'
 
-ads_html += "</a>"
+    html_output += "</div>\n"
 
-# HTML生成
-html = f"""
-<html>
-<head>
-<meta charset="utf-8">
-<link rel="stylesheet" href="style.css">
-</head>
 
-<body>
-
-<div class="layout">
-
-<div class="left">
-{ads_html}
-</div>
-
-<div class="center">
-{rss_html}
-</div>
-
-</div>
-
-</body>
-</html>
-"""
-
-open("index.html","w",encoding="utf-8").write(html)
+with open("rss.html", "w", encoding="utf-8") as f:
+    f.write(html_output)
