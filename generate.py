@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 # RSS読み込み
 # ------------------------
 
-with open("rss.json", encoding="utf-8") as f:
+with open("sites.json", encoding="utf-8") as f:
     sites = json.load(f)
 
 # ------------------------
