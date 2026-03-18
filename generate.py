@@ -1,76 +1,48 @@
-import feedparser
-import json
+import time
 import random
-from datetime import datetime, timedelta, timezone
+import requests
+from bs4 import BeautifulSoup
 
-# 日本時間
-JST = timezone(timedelta(hours=9))
+SEARCH_URL = "https://jp.mercari.com/search?keyword=初音ミク フィギュア"
+AFF_LINK = "https://your-affiliate-link.com"
 
-# RSSサイト読み込み
-with open("sites.json","r",encoding="utf-8") as f:
-    sites=json.load(f)
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
 
-# メルカリ画像読み込み
-with open("mercari.json","r",encoding="utf-8") as f:
-    mercari=json.load(f)
+# ページ取得
+res = requests.get(SEARCH_URL, headers=headers)
+soup = BeautifulSoup(res.text, "html.parser")
 
-# ランダム画像
-ads=random.sample(mercari, min(6,len(mercari)))
+imgs = soup.find_all("img")
 
-html="""
-<html>
-<head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="style.css">
-<title>2chまとめアンテナ</title>
-</head>
-<body>
+thumbs = []
 
-<div class="left_ads">
-"""
+for img in imgs:
+    src = img.get("src")
+    
+    if src and "static.mercdn.net" in src:
+        thumbs.append(src)
 
-# メルカリ画像表示
-for img in ads:
-    html+=f'<a href="{img["url"]}" target="_blank"><img src="{img["img"]}"></a>'
+# 重複削除
+thumbs = list(set(thumbs))
 
-html+="""
-</div>
+# ランダム
+random.shuffle(thumbs)
 
-<h1>2chまとめアンテナ</h1>
-"""
+# 最大20件
+thumbs = thumbs[:20]
 
-# RSS取得
-for site in sites:
+# HTML生成
+html = f'<a href="{AFF_LINK}">\n'
 
-    html+=f'<h3><a href="{site["top"]}" target="_blank">{site["name"]}</a></h3><ul>'
+for img in thumbs:
+    html += f'<img src="{img}" width="200">\n'
 
-    feed=feedparser.parse(site["url"])
+html += "</a>"
 
-    for entry in feed.entries[:7]:
-
-        time="--:--"
-        t=None
-
-        if hasattr(entry,"published_parsed") and entry.published_parsed:
-            t=datetime(*entry.published_parsed[:6],tzinfo=timezone.utc)
-
-        elif hasattr(entry,"updated_parsed") and entry.updated_parsed:
-            t=datetime(*entry.updated_parsed[:6],tzinfo=timezone.utc)
-
-        if t:
-            time=t.astimezone(JST).strftime("%m/%d %H:%M")
-
-        html+=f"""
-<li>
-<span class="time">{time}</span>
-<a href="{entry.link}" target="_blank">{entry.title}</a>
-</li>
-"""
-
-    html+="</ul>"
-
-html+="</body></html>"
-
-# HTML書き出し
-with open("index.html","w",encoding="utf-8") as f:
+# 保存
+with open("mercari.html","w",encoding="utf-8") as f:
     f.write(html)
+
+print("生成完了")
