@@ -43,22 +43,17 @@ background:#2c3e50;
 color:white;
 }
 
-/* メルカリ画像サイドバー */
+/* メルカリ広告 */
 
 .left_ads{
 position:fixed;
 left:20px;
-top:100px;
+top:120px;
 width:160px;
 }
 
 .left_ads img{
 width:150px;
-margin-bottom:10px;
+margin-bottom:12px;
 border-radius:6px;
-}
-
-.left_ads img:hover{
-transform:scale(1.05);
-box-shadow:0 0 8px #000;
 }
