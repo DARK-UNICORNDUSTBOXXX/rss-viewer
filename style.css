@@ -48,15 +48,14 @@ color:white;
 .left_ads{
 position:fixed;
 left:20px;
-top:120px;
-width:170px;
+top:100px;
+width:160px;
 }
 
 .left_ads img{
-width:160px;
-margin-bottom:12px;
+width:150px;
+margin-bottom:10px;
 border-radius:6px;
-transition:0.2s;
 }
 
 .left_ads img:hover{
