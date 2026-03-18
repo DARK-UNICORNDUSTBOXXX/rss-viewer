@@ -15,5 +15,6 @@
   {"name":"キニ速","url":"http://blog.livedoor.jp/kinisoku/index.rdf","top":"http://blog.livedoor.jp/kinisoku/"},
   {"name":"カオスちゃんねる","url":"http://chaos2ch.com/index.rdf","top":"http://chaos2ch.com/"},
   {"name":"watch＠２ちゃんねる","url":"http://www.watch2chan.com/index.rdf","top":"http://www.watch2chan.com/"},
-  {"name":"ブラブラブラウジング","url":"http://brow2ing.com/index.rdf","top":"http://brow2ing.com/"}
+  {"name":"ブラブラブラウジング","url":"http://brow2ing.com/index.rdf","top":"http://brow2ing.com/"},
+  {"name":"ポッカキット","url":"https://www.po-kaki-to.com/feed","top":"https://www.po-kaki-to.com/"}
 ]
