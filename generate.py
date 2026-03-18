@@ -15,7 +15,7 @@ with open("mercari.json","r",encoding="utf-8") as f:
     mercari=json.load(f)
 
 # ランダム画像
-ads=random.sample(mercari,6)
+ads=random.sample(mercari, min(6,len(mercari)))
 
 html="""
 <html>
