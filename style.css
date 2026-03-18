@@ -1,21 +1,63 @@
+```css
 body{
 background:#0f1115;
 color:#d0d0d0;
 font-family:"Meiryo",sans-serif;
-width:900px;
+max-width:1200px;
 margin:auto;
+padding:20px;
 }
+
+/* レイアウト */
+
+.container{
+display:flex;
+gap:30px;
+align-items:flex-start;
+}
+
+/* 左広告 */
+
+.left{
+width:220px;
+position:sticky;
+top:20px;
+}
+
+.left img{
+width:200px;
+display:block;
+margin-bottom:12px;
+border-radius:8px;
+transition:0.2s;
+}
+
+.left img:hover{
+transform:scale(1.05);
+}
+
+/* RSSメイン */
+
+.main{
+flex:1;
+}
+
+/* タイトル */
 
 h1{
 color:white;
 margin-bottom:30px;
 }
 
+/* RSSカテゴリ */
+
 h3{
 border-left:8px solid #ff7aa2;
 padding-left:10px;
 margin-top:30px;
 }
+
+/* RSSリスト */
 
 ul{
 list-style:none;
@@ -27,11 +69,15 @@ padding:6px;
 border-bottom:1px solid #2a2d36;
 }
 
+/* 時間 */
+
 .time{
 color:#9aa0a6;
 margin-right:10px;
 font-size:12px;
 }
+
+/* リンク */
 
 a{
 color:#7fb7ff;
@@ -43,17 +89,23 @@ background:#2c3e50;
 color:white;
 }
 
-/* メルカリ広告 */
+/* スマホ */
 
-.left_ads{
-position:fixed;
-left:20px;
-top:120px;
-width:160px;
+@media (max-width:900px){
+
+.container{
+flex-direction:column;
 }
 
-.left_ads img{
-width:150px;
-margin-bottom:12px;
-border-radius:6px;
+.left{
+width:100%;
+display:flex;
+gap:10px;
+overflow-x:auto;
 }
+
+.left img{
+width:140px;
+}
+}
+```
