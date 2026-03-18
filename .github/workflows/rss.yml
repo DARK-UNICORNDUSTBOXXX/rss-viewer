@@ -1,5 +1,5 @@
 ```yaml
-name: update rss
+name: update-rss
 
 on:
   schedule:
@@ -14,23 +14,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: python setup
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      - name: install
-        run: pip install feedparser requests beautifulsoup4
+      - name: Install libraries
+        run: |
+          pip install feedparser
+          pip install requests
+          pip install beautifulsoup4
 
-      - name: generate html
+      - name: Run generator
         run: python generate.py
 
-      - name: commit
+      - name: Commit changes
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
           git add .
-          git commit -m "auto update" || echo no changes
+          git commit -m "auto update" || echo "no changes"
           git push
+```
