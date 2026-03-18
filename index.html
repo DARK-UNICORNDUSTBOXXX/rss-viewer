@@ -2,15 +2,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>2chまとめアンテナ</title>
 <link rel="stylesheet" href="style.css">
+<title>2chまとめアンテナ</title>
 </head>
 <body>
 
-<div id="mercari_side"></div>
+<div class="left_ads">
+<a href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2" target="_blank"><img src="https://static.mercdn.net/item/detail/orig/photos/m12345678902_1.jpg"></a><a href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2" target="_blank"><img src="https://static.mercdn.net/item/detail/orig/photos/m12345678901_1.jpg"></a>
+</div>
 
 <h1>2chまとめアンテナ</h1>
-
 <h3><a href="https://itainews.com/" target="_blank">痛いニュース(ﾉ∀`)</a></h3><ul>
 <li>
 <span class="time">03/18 23:01</span>
@@ -773,7 +774,32 @@ WL PADは使う時に起動
 <span class="time">01/29 03:28</span>
 <a href="http://brow2ing.com/article/519843230.html" target="_blank">【画像】プログラマー、ガチのまじでAIに仕事を奪われて終わる</a>
 </li>
-</ul><h3><a href="https://fugumikan.blog.fc2.com/" target="_blank">ふぐみかん文字起こし</a></h3><ul></ul><h3><a href="https://www.po-kaki-to.com/" target="_blank">ポッカキット</a></h3><ul>
+</ul><h3><a href="https://fugumikan.blog.fc2.com/" target="_blank">ふぐみかん文字起こし</a></h3><ul>
+<li>
+<span class="time">01/23 20:00</span>
+<a href="https://fugumikan.blog.fc2.com/blog-entry-125.html" target="_blank">【3万円】TRN Mermaidレビュー！　ウォーム寄り？！ガラスドーム振動板＋MPD+BAの高品質トライブリッド！</a>
+</li>
+
+<li>
+<span class="time">01/22 20:56</span>
+<a href="https://fugumikan.blog.fc2.com/blog-entry-124.html" target="_blank">CCA Xyrra 本性剥き出し、ドライバ特性剥き出しの狂人向けハイブリッドイヤホンをレビュー。</a>
+</li>
+
+<li>
+<span class="time">01/14 22:15</span>
+<a href="https://fugumikan.blog.fc2.com/blog-entry-123.html" target="_blank">【$450】空間と低音とタイトさとクリアさ。Proが人気な理由がわかる高級ハイブリッド、XENNS Mangird Tea Pro SE(特別版）をレビュー。</a>
+</li>
+
+<li>
+<span class="time">01/11 20:00</span>
+<a href="https://fugumikan.blog.fc2.com/blog-entry-122.html" target="_blank">【6万円級】Geekwold GK300 Proレビュー。４種類12ドライバを使って実現したドライさと濃さ。#イヤホンレビュー #クアッドブリッド</a>
+</li>
+
+<li>
+<span class="time">01/10 19:47</span>
+<a href="https://fugumikan.blog.fc2.com/blog-entry-121.html" target="_blank">【高価格帯】バイオセルロースDDで低音がしっかり出る、王道ハイブリッド。Hisenior Mega7レビュー！</a>
+</li>
+</ul><h3><a href="https://www.po-kaki-to.com/" target="_blank">ポッカキット</a></h3><ul>
 <li>
 <span class="time">03/18 22:22</span>
 <a href="https://www.po-kaki-to.com/archives/38210.html" target="_blank">白人観光客が日本で美女2人をナンパ ⇒「ありえないスピード」でヤラれて無修正で晒される</a>
@@ -843,36 +869,4 @@ WL PADは使う時に起動
 <span class="time">03/16 17:41</span>
 <a href="https://gazlog.com/entry/microsoft-copilot-no-more-to-windows11/" target="_blank">MicrosoftがWindows 11へのCopilot統合を実質撤回。AI機能はオプション化へ</a>
 </li>
-</ul>
-
-<script>
-
-fetch("mercari.json")
-.then(r=>r.json())
-.then(list=>{
-
-const area=document.getElementById("mercari_side")
-
-const shuffled=list.sort(()=>0.5-Math.random()).slice(0,6)
-
-shuffled.forEach(img=>{
-
-const a=document.createElement("a")
-a.href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2"
-a.target="_blank"
-
-const image=document.createElement("img")
-image.src=img
-image.className="mercari_img"
-
-a.appendChild(image)
-area.appendChild(a)
-
-})
-
-})
-
-</script>
-
-</body>
-</html>
+</ul></body></html>
