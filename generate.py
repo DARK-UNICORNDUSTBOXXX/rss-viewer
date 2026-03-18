@@ -1,128 +1,85 @@
 import feedparser
-import json
 import random
-import asyncio
-from playwright.async_api import async_playwright
+import requests
+from bs4 import BeautifulSoup
 
-# -----------------------------
-# RSSサイト読み込み
-# -----------------------------
-with open("sites.json","r",encoding="utf-8") as f:
-    sites=json.load(f)
+RSS_URL = "RSS_URL"
+MERCARI_SEARCH = "https://jp.mercari.com/search?keyword=初音ミク フィギュア"
 
-# -----------------------------
-# メルカリ画像取得
-# -----------------------------
-async def get_mercari_images():
-
-    url="https://jp.mercari.com/search?keyword=初音ミク フィギュア"
-
-    images=[]
-
-    async with async_playwright() as p:
-
-        browser=await p.chromium.launch()
-        page=await browser.new_page()
-
-        await page.goto(url)
-
-        await page.wait_for_selector("img")
-
-        imgs=await page.query_selector_all("img")
-
-        for img in imgs:
-
-            src=await img.get_attribute("src")
-
-            if src and "mercdn" in src:
-
-                images.append(src)
-
-        await browser.close()
-
-    images=list(set(images))
-
-    if len(images)>6:
-        images=random.sample(images,6)
-
-    return images
-
-
-# -----------------------------
 # RSS取得
-# -----------------------------
-def get_rss():
+feed = feedparser.parse(RSS_URL)
 
-    items=[]
+# メルカリ検索ページ取得
+r = requests.get(MERCARI_SEARCH, headers={"User-Agent":"Mozilla/5.0"})
+soup = BeautifulSoup(r.text,"html.parser")
 
-    for s in sites:
+mercari_items = []
 
-        feed=feedparser.parse(s["url"])
+for a in soup.select("a[href*='/item/']"):
 
-        for e in feed.entries[:10]:
+    link = "https://jp.mercari.com" + a["href"]
 
-            items.append({
-                "title":e.title,
-                "link":e.link,
-                "site":s["name"]
-            })
+    img = a.find("img")
+    if not img:
+        continue
 
-    return items
+    src = img.get("src") or img.get("data-src")
+    if not src:
+        continue
 
+    mercari_items.append((link,src))
 
-# -----------------------------
+# ランダム6件
+ads = random.sample(mercari_items, min(6,len(mercari_items)))
+
+# RSS作成
+rss_html = ""
+
+for e in feed.entries[:30]:
+
+    img = ""
+
+    if "summary" in e:
+        s = BeautifulSoup(e.summary,"html.parser")
+        tag = s.find("img")
+        if tag:
+            img = tag.get("src") or tag.get("data-src") or ""
+
+    rss_html += f"""
+<div class="rss-item">
+<a href="{e.link}" target="_blank">
+<img src="{img}">
+<div class="title">{e.title}</div>
+</a>
+</div>
+"""
+
+# 広告HTML
+ads_html = '<a href="https://px.a8.net/svt/ejp?a8mat=XXXX">\n'
+
+for link,img in ads:
+    ads_html += f'<img src="{img}" class="adimg">\n'
+
+ads_html += "</a>"
+
 # HTML生成
-# -----------------------------
-async def main():
-
-    mercari=await get_mercari_images()
-    rss=get_rss()
-
-    html="""
+html = f"""
 <html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <link rel="stylesheet" href="style.css">
-<title>RSS Viewer</title>
 </head>
 
 <body>
 
-<div class="container">
+<div class="layout">
 
 <div class="left">
-"""
-
-    for img in mercari:
-
-        html+=f"""
-<a href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2" target="_blank">
-<img src="{img}">
-</a>
-"""
-
-    html+="""
+{ads_html}
 </div>
 
-<div class="main">
-
-<h1>RSSまとめ</h1>
-<ul>
-"""
-
-    for r in rss:
-
-        html+=f"""
-<li>
-<a href="{r["link"]}" target="_blank">
-{r["title"]}
-</a>
-</li>
-"""
-
-    html+="""
-</ul>
-
+<div class="center">
+{rss_html}
 </div>
 
 </div>
@@ -131,8 +88,4 @@ async def main():
 </html>
 """
 
-    with open("index.html","w",encoding="utf-8") as f:
-        f.write(html)
-
-
-asyncio.run(main())
+open("index.html","w",encoding="utf-8").write(html)
