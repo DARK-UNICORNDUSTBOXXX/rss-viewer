@@ -23,9 +23,13 @@ jobs:
 
       - name: Install libraries
         run: |
+          pip install playwright
           pip install feedparser
           pip install requests
           pip install beautifulsoup4
+
+      - name: Install browser
+        run: playwright install chromium
 
       - name: Run generator
         run: python generate.py
