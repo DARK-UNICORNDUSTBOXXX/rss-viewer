@@ -1,54 +1,56 @@
 import feedparser
 import json
 import random
-import html
-import requests
-from bs4 import BeautifulSoup
+from datetime import datetime
 
-# ------------------------
-# RSS読み込み
-# ------------------------
+# RSSサイト読み込み
+with open("sites.json",encoding="utf-8") as f:
+    sites=json.load(f)
 
-with open("sites.json", encoding="utf-8") as f:
-    sites = json.load(f)
+# メルカリ広告読み込み
+with open("mercari.json",encoding="utf-8") as f:
+    mercari=json.load(f)
 
-# ------------------------
-# メルカリ画像取得
-# ------------------------
+ads=random.sample(mercari,min(len(mercari),6))
 
-SEARCH_URL = "https://jp.mercari.com/search?keyword=初音ミク フィギュア"
-AFF_LINK = "https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2"
+rss_html=""
 
-imgs = []
+for site in sites:
 
-try:
+    feed=feedparser.parse(site["url"])
 
-    headers = {
-        "User-Agent": "Mozilla/5.0"
-    }
+    rss_html+=f"<h2>{site['name']}</h2>"
+    rss_html+="<ul>"
 
-    r = requests.get(SEARCH_URL, headers=headers)
-    soup = BeautifulSoup(r.text, "html.parser")
+    for entry in feed.entries[:10]:
 
-    for img in soup.find_all("img"):
+        title=entry.title
+        link=entry.link
 
-        src = img.get("src")
+        if hasattr(entry,"published_parsed"):
+            time=datetime(*entry.published_parsed[:6]).strftime("%m/%d %H:%M")
+        else:
+            time=""
 
-        if src and "mercari" in src and "item" in src:
-            imgs.append(src)
+        rss_html+=f'''
+<li>
+<span class="time">{time}</span>
+<a href="{link}" target="_blank">{title}</a>
+</li>
+'''
 
-except:
-    pass
+    rss_html+="</ul>"
 
-# 6枚ランダム
-ads = random.sample(imgs, min(6, len(imgs)))
+# 広告HTML
+ads_html='<a href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2" target="_blank">'
 
-# ------------------------
+for img in ads:
+    ads_html+=f'<img src="{img}">'
+
+ads_html+='</a>'
+
 # HTML生成
-# ------------------------
-
-html_out = """
-<!DOCTYPE html>
+html=f'''
 <html>
 <head>
 <meta charset="utf-8">
@@ -58,55 +60,26 @@ html_out = """
 
 <body>
 
-<h1>RSSまとめ</h1>
+<h1>RSSまとめサイト</h1>
 
 <div class="container">
 
 <div class="left">
-"""
 
-# ------------------------
-# 広告
-# ------------------------
+{ads_html}
 
-html_out += f'<a href="{AFF_LINK}" target="_blank">'
+</div>
 
-for img in ads:
-    html_out += f'<img src="{img}">'
+<div class="main">
 
-html_out += "</a></div>"
+{rss_html}
 
-# ------------------------
-# RSSカラム
-# ------------------------
+</div>
 
-html_out += '<div class="main">'
+</div>
 
-for site in sites:
+</body>
+</html>
+'''
 
-    name = site["name"]
-    url = site["url"]
-    top = site["top"]
-
-    feed = feedparser.parse(url)
-
-    html_out += f"<h3>{html.escape(name)}</h3>"
-    html_out += "<ul>"
-
-    for entry in feed.entries[:top]:
-
-        title = html.escape(entry.title)
-        link = entry.link
-
-        html_out += f'<li><a href="{link}" target="_blank">{title}</a></li>'
-
-    html_out += "</ul>"
-
-html_out += "</div></div></body></html>"
-
-# ------------------------
-# 出力
-# ------------------------
-
-with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_out)
+open("index.html","w",encoding="utf-8").write(html)
