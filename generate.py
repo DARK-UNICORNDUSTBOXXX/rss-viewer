@@ -1,85 +1,93 @@
 import feedparser
 import json
 import random
-from datetime import datetime
+import requests
+from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
+
+# JST用
+JST_OFFSET = 9
 
 # RSSサイト読み込み
-with open("sites.json",encoding="utf-8") as f:
-    sites=json.load(f)
+with open("sites.json", "r", encoding="utf-8") as f:
+    sites = json.load(f)
 
 # メルカリ広告読み込み
-with open("mercari.json",encoding="utf-8") as f:
-    mercari=json.load(f)
+with open("mercari.json", "r", encoding="utf-8") as f:
+    mercari = json.load(f)
 
-ads=random.sample(mercari,min(len(mercari),6))
+# ランダムで最大6件抽出
+ads = random.sample(mercari, min(len(mercari), 6))
 
-rss_html=""
+# メルカリサムネ取得関数
+def get_mercari_thumbnail(url):
+    try:
+        resp = requests.get(url, timeout=5)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        og = soup.find("meta", property="og:image")
+        return og["content"] if og else ""
+    except:
+        return ""
 
+# 広告HTML生成
+ads_html = ""
+for ad_url in ads:
+    thumb = get_mercari_thumbnail(ad_url)
+    if thumb:
+        ads_html += f'<a href="{ad_url}" target="_blank"><img src="{thumb}"></a>'
+
+# RSS記事HTML生成
+rss_html = ""
 for site in sites:
+    name = site.get("name", "")
+    url = site.get("url", "")
+    top = site.get("top", "")
 
-    feed=feedparser.parse(site["url"])
+    rss_html += f'<h3><a class="site_title" href="{top}" target="_blank">{name}</a></h3><ul>'
 
-    rss_html+=f"<h2>{site['name']}</h2>"
-    rss_html+="<ul>"
+    feed = feedparser.parse(url)
 
-    for entry in feed.entries[:10]:
+    for entry in feed.entries[:7]:
+        time_str = "--:--"
+        t = None
 
-        title=entry.title
-        link=entry.link
+        if hasattr(entry, "published_parsed") and entry.published_parsed:
+            t = datetime(*entry.published_parsed[:6]) + timedelta(hours=JST_OFFSET)
+        elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
+            t = datetime(*entry.updated_parsed[:6]) + timedelta(hours=JST_OFFSET)
 
-        if hasattr(entry,"published_parsed"):
-            time=datetime(*entry.published_parsed[:6]).strftime("%m/%d %H:%M")
-        else:
-            time=""
+        if t:
+            time_str = t.strftime("%m/%d %H:%M")
 
-        rss_html+=f'''
-<li>
-<span class="time">{time}</span>
-<a href="{link}" target="_blank">{title}</a>
-</li>
-'''
+        rss_html += f'<li><span class="time">{time_str}</span> <a href="{entry.link}" target="_blank">{entry.title}</a></li>'
 
-    rss_html+="</ul>"
+    rss_html += "</ul>"
 
-# 広告HTML
-ads_html='<a href="https://jp.mercari.com/search?afid=2445940742&keyword=%E5%88%9D%E9%9F%B3%E3%83%9F%E3%82%AF+%E3%83%95%E3%82%A3%E3%82%AE%E3%83%A5%E3%82%A2" target="_blank">'
-
-for img in ads:
-    ads_html+=f'<img src="{img}">'
-
-ads_html+='</a>'
-
-# HTML生成
-html=f'''
+# HTML構造
+html = f"""
 <html>
 <head>
-<meta charset="utf-8">
-<title>RSSまとめ</title>
+<meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
+<title>RSSまとめサイト</title>
 </head>
-
 <body>
 
 <h1>RSSまとめサイト</h1>
 
 <div class="container">
-
-<div class="left">
-
-{ads_html}
-
-</div>
-
-<div class="main">
-
-{rss_html}
-
-</div>
-
+    <div class="left">
+        {ads_html}
+    </div>
+    <div class="main">
+        {rss_html}
+    </div>
 </div>
 
 </body>
 </html>
-'''
+"""
 
-open("index.html","w",encoding="utf-8").write(html)
+# index.htmlに書き出し
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html)
