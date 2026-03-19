@@ -88,7 +88,8 @@ html = f"""
 """
 
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html)import feedparser
+    f.write(html)
+import feedparser
 import json
 import random
 import requests
