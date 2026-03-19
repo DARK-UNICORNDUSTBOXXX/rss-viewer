@@ -1,63 +1,92 @@
-body{
-background:#0f1115;
-color:#d0d0d0;
-font-family:"Meiryo",sans-serif;
-width:1100px;
-margin:auto;
+/* 全体 */
+body {
+    background: #0f1115;
+    color: #d0d0d0;
+    font-family: "Meiryo", sans-serif;
+    width: 1100px;
+    margin: auto;
 }
 
-h1{
-color:white;
-margin-bottom:30px;
+/* サイトタイトル */
+h1 {
+    color: white;
+    margin-bottom: 30px;
 }
 
-.container{
-display:flex;
-gap:30px;
+/* 2カラムレイアウト */
+.container {
+    display: flex;
+    gap: 30px;
 }
 
-.left{
-width:260px;
+/* 左カラム（広告） */
+.left {
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.left img{
-width:100%;
-margin-bottom:10px;
-border-radius:6px;
+/* 広告画像 */
+.left img {
+    width: 100%;
+    border-radius: 6px;
+    transition: transform 0.2s;
 }
 
-.main{
-flex:1;
+.left img:hover {
+    transform: scale(1.02);
 }
 
-h2{
-border-left:8px solid #ff7aa2;
-padding-left:10px;
-margin-top:30px;
+/* 右カラム（RSS記事） */
+.main {
+    flex: 1;
 }
 
-ul{
-list-style:none;
-padding:0;
+/* RSSサイトタイトル */
+h3, h2 {
+    border-left: 8px solid #ff7aa2;
+    padding-left: 10px;
+    margin-top: 30px;
 }
 
-li{
-padding:6px;
-border-bottom:1px solid #2a2d36;
+/* RSS記事リスト */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.time{
-color:#9aa0a6;
-margin-right:10px;
-font-size:12px;
+li {
+    padding: 6px;
+    border-bottom: 1px solid #2a2d36;
+    display: flex;
+    align-items: center;
 }
 
-a{
-color:#7fb7ff;
-text-decoration:none;
+/* 時間表示 */
+.time {
+    color: #9aa0a6;
+    margin-right: 10px;
+    font-size: 12px;
+    flex-shrink: 0;
+    width: 70px;
 }
 
-a:hover{
-background:#2c3e50;
-color:white;
+/* リンク */
+a {
+    color: #7fb7ff;
+    text-decoration: none;
+}
+
+a:hover {
+    background: #2c3e50;
+    color: white;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+/* サイトタイトルリンク */
+.site_title {
+    font-weight: bold;
 }
