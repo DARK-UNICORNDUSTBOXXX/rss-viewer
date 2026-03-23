@@ -68,11 +68,11 @@ html = f"""
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="style.css">
-<title>RSSまとめサイト</title>
+<title>2ちゃんねるまとめサイトのまとめ</title>
 </head>
 <body>
 
-<h1>RSSまとめサイト</h1>
+<h1>2ちゃんねるまとめサイトのまとめ</h1>
 
 <div class="container">
     <div class="left">
