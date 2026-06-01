@@ -48,7 +48,7 @@ for site in sites:
     top = site.get("top", "").strip()
 
     rss_html += f'<h3><a class="site_title" href="{top}" target="_blank">{name}</a></h3><ul>'
-    feed = feedparser.parse(url)
+    feed = feedparser.parse(url, sanitize_html=False)
 
     for entry in feed.entries[:7]:
         time_str = "--:--"
