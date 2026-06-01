@@ -43,9 +43,9 @@ for img in ads:
 # RSS記事HTML生成
 rss_html = ""
 for site in sites:
-    name = site.get("name", "")
-    url = site.get("url", "")
-    top = site.get("top", "")
+    name = site.get("name", "").strip()
+    url = site.get("url", "").strip()
+    top = site.get("top", "").strip()
 
     rss_html += f'<h3><a class="site_title" href="{top}" target="_blank">{name}</a></h3><ul>'
     feed = feedparser.parse(url)
