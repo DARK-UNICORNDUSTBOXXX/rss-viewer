@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, timedelta
 
 JST_OFFSET = 9
-
+feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 # RSSサイト読み込み
 with open("sites.json", "r", encoding="utf-8") as f:
     sites = json.load(f)
